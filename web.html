@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your Name - Physics Research</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Arial', sans-serif;
+      line-height: 1.6;
+      background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+      color: #e0e6ed;
+      min-height: 100vh;
+    }
+    header {
+      background: rgba(0,20,40,0.9);
+      padding: 2rem;
+      text-align: center;
+      border-bottom: 3px solid #00d4ff;
+    }
+    h1 { 
+      font-size: 2.5rem; 
+      color: #00d4ff; 
+      margin-bottom: 0.5rem;
+    }
+    .subtitle { color: #a0b6c8; font-size: 1.2rem; }
+    
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    
+    /* RESEARCH SECTIONS - Expandable */
+    .research-section {
+      background: rgba(20,25,40,0.8);
+      margin: 2rem 0;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      border: 1px solid rgba(0,212,255,0.2);
+    }
+    .research-header {
+      padding: 1.5rem 2rem;
+      cursor: pointer;
+      background: linear-gradient(90deg, rgba(0,212,255,0.1), transparent);
+      transition: all 0.3s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .research-header:hover { background: rgba(0,212,255,0.2); }
+    .research-header h2 { color: #00d4ff; font-size: 1.4rem; }
+    .arrow { font-size: 1.5rem; transition: transform 0.3s; }
+    .expanded .arrow { transform: rotate(180deg); }
+    
+    .research-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+    }
+    .research-section.expanded .research-content { max-height: 1000px; }
+    .research-content-inner {
+      padding: 2rem;
+      border-top: 1px solid rgba(0,212,255,0.1);
+    }
+    .paper-link { 
+      display: inline-block; 
+      background: #00d4ff; 
+      color: #0f0f23; 
+      padding: 0.5rem 1rem; 
+      border-radius: 20px; 
+      text-decoration: none;
+      margin: 0.5rem 0;
+      font-weight: bold;
+    }
+    
+    /* TABS SECTION */
+    .tabs-section {
+      background: rgba(15,20,35,0.9);
+      margin: 3rem 0;
+      padding: 2rem;
+      border-radius: 12px;
+      border: 1px solid rgba(0,212,255,0.2);
+    }
+    .tab-nav {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .tab-btn {
+      background: rgba(0,212,255,0.1);
+      border: 2px solid rgba(0,212,255,0.3);
+      color: #e0e6ed;
+      padding: 1rem 2rem;
+      cursor: pointer;
+      border-radius: 25px;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+    .tab-btn:hover, .tab-btn.active {
+      background: #00d4ff;
+      color: #0f0f23;
+      border-color: #00d4ff;
+    }
+    .tab-content { display: none; padding: 2rem 0; }
+    .tab-content.active { display: block; }
+    
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .project-card {
+      background: rgba(255,255,255,0.05);
+      padding: 1.5rem;
+      border-radius: 10px;
+      border-left: 4px solid #00d4ff;
+      transition: transform 0.3s;
+    }
+    .project-card:hover { transform: translateY(-5px); }
+    
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #8b9ab3;
+      border-top: 1px solid rgba(0,212,255,0.1);
+      margin-top: 4rem;
+    }
+    
+    @media (max-width: 768px) {
+      .research-header { padding: 1rem; }
+      .research-content-inner { padding: 1rem; }
+      h1 { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Nayan Sharma</h1>
+    <p class="subtitle">Physics PhD Candidate | Optics & Quantum Research</p>
+  </header>
+  
+  <div class="container">
+    <!-- RESEARCH SECTIONS -->
+    <section class="research-section" onclick="toggleResearch(this)">
+      <div class="research-header">
+        <h2>🔬 Controlling Atomic Spins in Vapor Cells</h2>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="research-content">
+        <div class="research-content-inner">
+          <p>Vapor cells have thermal atoms which are in Maxwell Boltzmann distribution. At room temperature how can you extract informations which are often washed away by Doppler broadening? Optical pumping helps, put all the velocity classes to closed tranisitions and do the spectroscopy you might get what you expect for cold atoms (well to upto a certain degree!!)</p>
+          <a href="https://link.springer.com/article/10.1140/epjd/e2020-10050-7" class="paper-link" target="_blank">Paper 1 (First we understood Asymmetry)</a>
+          <a href="https://www.sciencedirect.com/science/article/abs/pii/S0375960121005375" class="paper-link" target="_blank">Paper 2 (Then we controlled it)</a>
+	  <a href="https://link.springer.com/article/10.1007/s00340-023-08016-9" class="paper-link" target="_blank">Paper 3 (Add Anti-relaxation coating)</a>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="research-section" onclick="toggleResearch(this)">
+      <div class="research-header">
+        <h2>⚛️ Leveraging Doppler shifts and Light Polarizations to switch between Absorption/Transmission</h2>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="research-content">
+        <div class="research-content-inner">
+          <p>Thermal atoms can be divided into classes which can be used to switch between absorption and transmission. What happens if we take a large Zeeman Manifold? We can move from orientation to alignment but with a twist brought about by quantum interfernce effects.   </p>
+          <a href="https://www.sciencedirect.com/science/article/abs/pii/S0030401823002134" class="paper-link" target="_blank">Paper 4 (N level systems)</a>
+          <a href="https://https://link.springer.com/article/10.1007/s00340-025-08584-y" class="paper-link" target="_blank">Paper 5 (13 and 16 -level systems)</a>
+	  
+
+        </div>
+      </div>
+    </section>
+
+    <section class="research-section" onclick="toggleResearch(this)">
+      <div class="research-header">
+        <h2>🧲 Precision Magnetic Field Measurements</h2>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="research-content">
+        <div class="research-content-inner">
+          <p>Using the symmetry of the interaction Hamitonian, the orientation of an arbitrary magnetic field can be found which requires no calibration. Proof of concept experiment is Done. Full experiment? Open for discussions and collaborations</p>
+          <a href="https://arxiv.org/abs/2509.12887" class="paper-link" target="_blank">Measurement Paper6 (Choose your quantization axis wisely!)</a>
+        </div>
+      </div>
+    </section>
+    
+    <!-- TABS SECTION -->
+    <section class="tabs-section">
+      <div class="tab-nav">
+        <button class="tab-btn active" onclick="openTab(event, 'projects')">Projects</button>
+        <button class="tab-btn" onclick="openTab(event, 'cv')">CV</button>
+        <button class="tab-btn" onclick="openTab(event, 'about')">About</button>
+        <button class="tab-btn" onclick="openTab(event, 'contact')">Contact</button>
+      </div>
+      
+      <div id="projects" class="tab-content active">
+        <h2>Creative Coding & Visualizations</h2>
+        <div class="project-grid">
+          <div class="project-card">
+            <h3>Collatz Race</h3>
+            <p>Modulo-9 visualization of the unsolved Collatz conjecture</p>
+            <a href="collatz-race.html" target="_blank">Play Game</a> | 
+            <a href="https://github.com/yourusername/collatz-race" target="_blank">GitHub</a>
+          </div>
+          <!-- Add more projects -->
+        </div>
+      </div>
+      
+      <div id="cv" class="tab-content">
+        <h2>Curriculum Vitae</h2>
+        <p>Download my CV: <a href="cv.pdf" target="_blank">CV.pdf</a></p>
+        <!-- Embed CV or list experience -->
+      </div>
+      
+      <div id="about" class="tab-content">
+        <h2>About Me</h2>
+        <p>I'm a science enthusiast with a knack for asking questions that often seem silly... <em>Have I found anything new? NO—but who cares? Science is fun, and that's the reason I do it.</em></p>
+      </div>
+      
+      <div id="contact" class="tab-content">
+        <h2>Contact</h2>
+        <p>Email: your.email@example.com | LinkedIn: /in/yourprofile</p>
+      </div>
+    </section>
+  </div>
+  
+  <footer>
+    © 2025 Your Name | Physics Research Portfolio
+  </footer>
+
+  <script>
+    function toggleResearch(section) {
+      section.classList.toggle('expanded');
+    }
+    
+    function openTab(evt, tabName) {
+      // Tab buttons
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      evt.currentTarget.classList.add('active');
+      
+      // Tab contents
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      document.getElementById(tabName).classList.add('active');
+    }
+  </script>
+</body>
+</html>

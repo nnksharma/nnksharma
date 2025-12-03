@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+  <style>
+    body { margin:0; overflow:hidden; background:#0b0e17; font-family:Arial; }
+    #inputBox { position:absolute; top:10px; left:10px; z-index:100; padding:15px; background:rgba(0,0,0,0.8); border-radius:12px; color:white; }
+    input, button, select { padding:10px; font-size:16px; margin:5px; border-radius:6px; border:none; }
+    button { background:#4a90e2; color:white; cursor:pointer; }
+    .player-info { margin:5px 0; font-size:14px; }
+    .winner { color: #ffd700; font-size: 24px; font-weight: bold; text-shadow: 0 0 10px #ffd700; }
+  </style>
+</head>
+<body>
+
+<div id="inputBox">
+  <div class="player-info">🎮 <strong>PLAYER 1</strong></div>
+  <input id="p1Num" type="number" value="27" placeholder="Player 1 number">
+  <br>
+  <div class="player-info">⚡ <strong>PLAYER 2</strong></div>
+  <input id="p2Num" type="number" value="13" placeholder="Player 2 number">
+  <br>
+  <button onclick="launchGame()">🚀 START RACE!</button>
+  <br>
+  <select id="speed">
+    <option value="60">Normal Speed</option>
+    <option value="45">Fast</option>
+    <option value="30">Very Fast</option>
+  </select>
+  <div id="winnerText"></div>
+</div>
+
+<script>
+let bowls = new Array(20).fill(null);
+let balls = [];
+let gameState = 'waiting';
+let collisionHighlight = {};
+let winnerAnnounced = false;
+const rows = [[0],[9,12,15],[1,2,3,4,5,6,7,8,10,11,13,14,16,17]];
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  colorMode(HSB, 360, 100, 100, 1);
+  textAlign(CENTER, CENTER);
+  initBowls();
+}
+
+function initBowls() {
+  let bowlRadius = min(width/35, 35);
+  let spacingX = min(120, width/16);
+  let spacingY = height / 6;
+  let startY = height / 8;
+  
+  bowls = new Array(20).fill(null);
+  
+  const bowlNames = {};
+  for (let i = 1; i <= 9; i++) {
+    bowlNames[i] = `${i}e`;
+    bowlNames[i+9] = `${i}o`;
+  }
+  bowlNames[0] = "9e";
+  bowlNames[9] = "90";
+  bowlNames[19] = "LOOP";
+  
+  for (let r = 0; r < rows.length; r++) {
+    let list = rows[r];
+    let y = startY + r * spacingY;
+    let totalWidth = (list.length - 1) * spacingX;
+    let startX = (width / 2) - (totalWidth / 2);
+    
+    for (let i = 0; i < list.length; i++) {
+      let idx = list[i];
+      let x = startX + i * spacingX;
+      let hue = (idx * 20) % 360;
+      if (idx === 0) hue = 0;           
+      if ([9,12,15].includes(idx)) hue = 35; 
+      bowls[idx] = { x, y, r: bowlRadius, hue, label: bowlNames[idx] || `B${idx}`, idx };
+    }
+  }
+  
+  bowls[19] = { x: width/2, y: height - 120, r: bowlRadius * 1.5, hue: 200, label: "LOOP", idx: 19 };
+}
+
+function draw() {
+  background(220, 50, 20);
+  
+  let title = gameState === 'waiting' ? "COLLATZ RACE" : "Numbers are Running";
+  fill(255);
+  textSize(28);
+  text(title, width/2, 50);
+  
+  // Winner announcement
+  if (winnerAnnounced) {
+    fill(255);
+    textSize(24);
+    let winnerText = document.getElementById("winnerText").innerText;
+    text(winnerText, width*0.85, height*0.15);
+  }
+  
+  // Check for collisions
+  if (balls.length >= 2) {
+    let ball1 = balls[0];
+    let ball2 = balls[1];
+    if (ball1.targetBowl === ball2.targetBowl && ball1.targetBowl >= 0) {
+      let bowlIdx = ball1.targetBowl;
+      collisionHighlight[bowlIdx] = (collisionHighlight[bowlIdx] || 0) + 1;
+      if (collisionHighlight[bowlIdx] > 120) collisionHighlight[bowlIdx] = 0;
+    }
+  }
+  
+  // Draw bowls
+  bowls.forEach(b => {
+    if (!b) return;
+    push();
+    
+    if (collisionHighlight[b.idx] > 0) {
+      stroke(255, 100, 0, 0.8);
+      strokeWeight(8);
+    } else {
+      stroke(b.hue, 80, 90, 0.8);
+      strokeWeight(4);
+    }
+    noFill();
+    ellipse(b.x, b.y, b.r*2.1);
+    
+    fill(b.hue === 200 ? 0 : b.hue, 70, 95, 0.9);
+    noStroke();
+    ellipse(b.x, b.y, b.r*2);
+    
+    fill(255);
+    textSize(16);
+    text(b.label, b.x, b.y + b.r + 18);
+    pop();
+  });
+  
+  // Update & draw balls
+  for (let i = balls.length - 1; i >= 0; i--) {
+    let ball = balls[i];
+    ball.update();
+    ball.show();
+  }
+  
+  textSize(11);
+  fill(255, 150);
+  text("Imagined by Nayan. Scripting helped by GROK and Perplexity AI.", width/2, height - 25);
+}
+
+function launchGame() {
+  let p1Num = parseInt(document.getElementById("p1Num").value);
+  let p2Num = parseInt(document.getElementById("p2Num").value);
+  let speed = parseInt(document.getElementById("speed").value);
+  
+  if (isNaN(p1Num) || isNaN(p2Num) || p1Num <= 0 || p2Num <= 0) {
+    alert("Enter valid positive numbers!");
+    return;
+  }
+  
+  balls = [];
+  gameState = 'racing';
+  collisionHighlight = {};
+  winnerAnnounced = false;
+  document.getElementById("winnerText").innerText = "";
+  
+  let ball1 = new Ball(p1Num, "1");
+  let ball2 = new Ball(p2Num, "2");
+  ball1.stepInterval = speed;
+  ball2.stepInterval = speed;
+  balls.push(ball1, ball2);
+}
+
+class Ball {
+  constructor(startNum, playerLabel) {
+    this.n = Math.floor(startNum);
+    this.playerLabel = playerLabel;  // "1" or "2"
+    this.x = random(100, windowWidth-100);
+    this.y = -50;
+    this.vx = random(-1,1);
+    this.vy = 0;
+    this.targetBowl = this.getBowlIndex();
+    this.prevBowl = null;
+    this.t = 0;
+    this.isTeleporting = true;
+    this.stepTimer = 0;
+    this.stepInterval = 60;
+    this.inLoop = false;
+  }
+  
+  getBowlIndex() {
+    let mod9 = this.n % 9;
+    if (mod9 === 0) mod9 = 9;
+    let even = this.n % 2 === 0;
+    let idx = even ? mod9 : mod9 + 9;
+    if (even && this.n % 9 === 0) return 0;
+    if (!even && (mod9 === 9 || mod9 === 3 || mod9 === 6)) {
+      if (mod9 === 9) return 9;
+      if (mod9 === 3) return 12;
+      if (mod9 === 6) return 15;
+    }
+    return idx;
+  }
+  
+  areAdjacent(bowl1, bowl2) {
+    let b1 = bowls[bowl1];
+    let b2 = bowls[bowl2];
+    if (!b1 || !b2) return false;
+    let d = dist(b1.x, b1.y, b2.x, b2.y);
+    return d < 200;
+  }
+  
+  update() {
+    this.stepTimer++;
+    
+    if (this.stepTimer % this.stepInterval === 0 && this.n > 4) {
+      this.prevBowl = this.targetBowl;
+      if (this.n % 2 === 0) this.n = Math.floor(this.n / 2);
+      else this.n = 3 * this.n + 1;
+      
+      let newBowl = this.getBowlIndex();
+      
+      if (this.n === 1 || this.n === 2 || this.n === 4) {
+        newBowl = 19;
+        this.inLoop = true;
+        
+        // ANNOUNCE WINNER
+        if (!winnerAnnounced && balls.length >= 2) {
+          let otherBall = balls.find(b => b !== this);
+          if (otherBall && !otherBall.inLoop) {
+            document.getElementById("winnerText").innerText = `PLAYER ${this.playerLabel} REACHED LOOP!`;
+            winnerAnnounced = true;
+          }
+        }
+      }
+      
+      if (this.areAdjacent(this.targetBowl, newBowl)) {
+        this.isTeleporting = false;
+        let startB = bowls[this.targetBowl];
+        let endB = bowls[newBowl];
+        this.startPos = {x: startB.x, y: startB.y};
+        this.endPos = {x: endB.x, y: endB.y};
+        this.t = 0;
+        this.targetBowl = newBowl;
+      } else {
+        this.isTeleporting = true;
+        let endB = bowls[newBowl];
+        this.x = endB.x;
+        this.y = endB.y;
+        this.targetBowl = newBowl;
+      }
+    }
+    
+    if (!this.isTeleporting && this.startPos && this.endPos) {
+      this.t += 0.03;
+      if (this.t >= 1) {
+        this.t = 1;
+        this.isTeleporting = true;
+        let endB = bowls[this.targetBowl];
+        this.x = endB.x;
+        this.y = endB.y;
+      } else {
+        this.x = lerp(this.startPos.x, this.endPos.x, this.t);
+        this.y = lerp(this.startPos.y, this.endPos.y, this.t);
+      }
+    }
+    
+    let b = bowls[this.targetBowl];
+    if (b && !this.isTeleporting && this.t >= 1) {
+      this.x = b.x + cos(frameCount * 0.1) * (b.r / 2);
+      this.y = b.y + sin(frameCount * 0.1) * (b.r / 2);
+    }
+  }
+  
+  show() {
+    // SAME BLACK BALLS FOR BOTH PLAYERS
+    fill(0);  // Pure black
+    noStroke();
+    ellipse(this.x, this.y, 24);  // Slightly bigger
+    
+    // PLAYER LABEL "1" or "2" (white text)
+    fill(255);
+    noStroke();
+    textSize(12);
+    text(this.playerLabel, this.x, this.y + 3);
+  }
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  initBowls();
+}
+</script>
+</body>
+</html>
+
