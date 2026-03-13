@@ -35,15 +35,24 @@
       line-height: 1.6;
     }
 
+html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100vh;
+      /* This ensures the font scales properly on live servers */
+      font-size: 16px; 
+    }
+
     #quantum-canvas {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
     }
 
     .hud-wrapper {
       display: grid;
-      grid-template-columns: 290px 1fr;
+      grid-template-columns: 320px 1fr;
       gap: 2.5rem;
-      max-width: 1600px;
+      max-width: 100%;
       margin: 0 auto;
       padding: 2rem;
       min-height: 100vh;
