@@ -3,248 +3,456 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Your Name - Physics Research</title>
+  <title>N. Sharma | Quantum Optics Laboratory</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;500;600&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  
   <style>
+    :root {
+      --bg-light: #f0f4f8;
+      --blue-primary: #0284c7; 
+      --blue-glow: rgba(2, 132, 199, 0.2);
+      --slate-border: #cbd5e1;
+      --amber-alert: #d97706;
+      --red-error: #ef4444;
+      --text-ui: #64748b;
+      --text-main: #1e293b; 
+      --text-heading: #0f172a;
+      --panel-bg: rgba(255, 255, 255, 0.7);
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    
     body {
-      font-family: 'Arial', sans-serif;
+      background-color: var(--bg-light);
+      background-image: 
+        linear-gradient(rgba(148, 163, 184, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.1) 1px, transparent 1px);
+      background-size: 30px 30px;
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
       line-height: 1.6;
-      background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
-      color: #e0e6ed;
+    }
+
+    #quantum-canvas {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
+    }
+
+    .hud-wrapper {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      gap: 2.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
       min-height: 100vh;
     }
-    header {
-      background: rgba(0,20,40,0.9);
-      padding: 2rem;
-      text-align: center;
-      border-bottom: 3px solid #00d4ff;
-    }
-    h1 { 
-      font-size: 2.5rem; 
-      color: #00d4ff; 
-      margin-bottom: 0.5rem;
-    }
-    .subtitle { color: #a0b6c8; font-size: 1.2rem; }
-    
-    .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-    
-    /* RESEARCH SECTIONS - Expandable */
-    .research-section {
-      background: rgba(20,25,40,0.8);
-      margin: 2rem 0;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-      border: 1px solid rgba(0,212,255,0.2);
-    }
-    .research-header {
-      padding: 1.5rem 2rem;
-      cursor: pointer;
-      background: linear-gradient(90deg, rgba(0,212,255,0.1), transparent);
-      transition: all 0.3s ease;
+
+    .telemetry {
+      font-family: 'Share Tech Mono', monospace;
+      border-right: 1px solid var(--slate-border);
+      padding-right: 1.5rem;
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .telemetry-block {
+      background: rgba(255, 255, 255, 0.8);
+      border-left: 3px solid var(--blue-primary);
+      padding: 1rem;
+      font-size: 0.85rem;
+      color: var(--text-ui);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .telemetry-title {
+      color: var(--blue-primary);
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .live-data { color: var(--blue-primary); font-weight: bold; }
+
+    .core-interface { display: flex; flex-direction: column; }
+
+    header { margin-bottom: 3rem; position: relative; }
+
+    h1 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 4.5rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--text-heading);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+    }
+
+    .subtitle {
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--blue-primary);
+      font-size: 1.1rem;
+      margin-top: 0.5rem;
+      display: flex;
+      gap: 15px;
       align-items: center;
     }
-    .research-header:hover { background: rgba(0,212,255,0.2); }
-    .research-header h2 { color: #00d4ff; font-size: 1.4rem; }
-    .arrow { font-size: 1.5rem; transition: transform 0.3s; }
-    .expanded .arrow { transform: rotate(180deg); }
-    
-    .research-content {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.5s ease;
+
+    .subtitle::before { content: ""; width: 50px; height: 2px; background: var(--blue-primary); }
+
+    .nav-grid {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 3rem;
+      border-bottom: 1px solid var(--slate-border);
+      padding-bottom: 1rem;
+      flex-wrap: wrap;
     }
-    .research-section.expanded .research-content { max-height: 1000px; }
-    .research-content-inner {
-      padding: 2rem;
-      border-top: 1px solid rgba(0,212,255,0.1);
+
+    .nav-btn {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-ui);
+      background: rgba(255, 255, 255, 0.5);
+      border: none;
+      padding: 1rem 2.5rem;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s ease;
+      clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
     }
-    .paper-link { 
-      display: inline-block; 
-      background: #00d4ff; 
-      color: #0f0f23; 
-      padding: 0.5rem 1rem; 
-      border-radius: 20px; 
+
+    .nav-btn::after {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      border: 1px solid var(--slate-border);
+      clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+    }
+
+    .nav-btn:hover, .nav-btn.active {
+      background: #fff;
+      color: var(--blue-primary);
+      box-shadow: 0 5px 15px rgba(2, 132, 199, 0.15);
+    }
+
+    .nav-btn.active::after { border-color: var(--blue-primary); border-width: 2px; }
+
+    .panel { display: none; }
+    .panel.active { display: block; animation: techReveal 0.5s cubic-bezier(0.1, 0.9, 0.2, 1) forwards; }
+
+    @keyframes techReveal {
+      0% { opacity: 0; transform: scaleY(0.95) translateY(20px); filter: blur(4px); }
+      100% { opacity: 1; transform: scaleY(1) translateY(0); filter: blur(0); }
+    }
+
+    @keyframes glitch {
+      0%, 100% { opacity: 1; transform: translateX(0); }
+      90% { opacity: 1; transform: translateX(0); }
+      92% { opacity: 0.8; transform: translateX(-2px); }
+      94% { opacity: 0.9; transform: translateX(2px); }
+      96% { opacity: 0.8; transform: translateX(-1px); }
+    }
+
+    .case-file {
+      background: var(--panel-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+      padding: 2.5rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+    }
+
+    .case-file::before {
+      content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+      background: var(--slate-border); transition: 0.3s;
+    }
+
+    .case-file:hover::before { background: var(--blue-primary); }
+    .case-file:hover { box-shadow: 0 15px 35px rgba(2, 132, 199, 0.08); }
+
+    .case-title {
+      font-family: 'Rajdhani', sans-serif; font-size: 1.8rem; color: var(--text-heading);
+      text-transform: uppercase; margin-bottom: 1rem; font-weight: 700;
+    }
+
+    .case-content p { color: var(--text-main); margin-bottom: 1.5rem; font-weight: 400; font-size: 1.05rem; }
+
+    .action-btn {
+      display: inline-block;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.9rem;
+      color: var(--blue-primary);
       text-decoration: none;
-      margin: 0.5rem 0;
+      text-transform: uppercase;
+      padding: 0.6rem 1.2rem;
+      margin: 0.5rem 0.5rem 0 0;
+      border: 1px solid var(--blue-primary);
+      background: #fff;
+      position: relative;
+      overflow: hidden;
+      transition: 0.3s;
       font-weight: bold;
     }
-    
-    /* TABS SECTION */
-    .tabs-section {
-      background: rgba(15,20,35,0.9);
-      margin: 3rem 0;
-      padding: 2rem;
-      border-radius: 12px;
-      border: 1px solid rgba(0,212,255,0.2);
+
+    .action-btn::before {
+      content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+      background: rgba(2, 132, 199, 0.1); transition: 0.4s;
     }
-    .tab-nav {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    .tab-btn {
-      background: rgba(0,212,255,0.1);
-      border: 2px solid rgba(0,212,255,0.3);
-      color: #e0e6ed;
-      padding: 1rem 2rem;
-      cursor: pointer;
-      border-radius: 25px;
-      transition: all 0.3s;
-      font-weight: 500;
-    }
-    .tab-btn:hover, .tab-btn.active {
-      background: #00d4ff;
-      color: #0f0f23;
-      border-color: #00d4ff;
-    }
-    .tab-content { display: none; padding: 2rem 0; }
-    .tab-content.active { display: block; }
-    
-    .project-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-      margin-top: 2rem;
-    }
-    .project-card {
-      background: rgba(255,255,255,0.05);
-      padding: 1.5rem;
-      border-radius: 10px;
-      border-left: 4px solid #00d4ff;
-      transition: transform 0.3s;
-    }
-    .project-card:hover { transform: translateY(-5px); }
-    
-    footer {
-      text-align: center;
-      padding: 2rem;
-      color: #8b9ab3;
-      border-top: 1px solid rgba(0,212,255,0.1);
-      margin-top: 4rem;
-    }
-    
-    @media (max-width: 768px) {
-      .research-header { padding: 1rem; }
-      .research-content-inner { padding: 1rem; }
-      h1 { font-size: 2rem; }
+
+    .action-btn:hover { color: #fff; background: var(--blue-primary); box-shadow: 0 5px 15px var(--blue-glow); }
+
+    @media (max-width: 900px) {
+      .hud-wrapper { grid-template-columns: 1fr; }
+      .telemetry { display: none; } 
+      h1 { font-size: 3rem; }
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Nayan Sharma</h1>
-    <p class="subtitle">Physics PhD Candidate | Optics & Quantum Research</p>
-  </header>
-  
-  <div class="container">
-    <!-- RESEARCH SECTIONS -->
-    <section class="research-section" onclick="toggleResearch(this)">
-      <div class="research-header">
-        <h2>🔬 Controlling Atomic Spins in Vapor Cells</h2>
-        <span class="arrow">▼</span>
-      </div>
-      <div class="research-content">
-        <div class="research-content-inner">
-          <p>Vapor cells have thermal atoms which are in Maxwell Boltzmann distribution. At room temperature how can you extract informations which are often washed away by Doppler broadening? Optical pumping helps, put all the velocity classes to closed tranisitions and do the spectroscopy you might get what you expect for cold atoms (well to upto a certain degree!!)</p>
-          <a href="https://link.springer.com/article/10.1140/epjd/e2020-10050-7" class="paper-link" target="_blank">Paper 1 (First we understood Asymmetry)</a>
-          <a href="https://www.sciencedirect.com/science/article/abs/pii/S0375960121005375" class="paper-link" target="_blank">Paper 2 (Then we controlled it)</a>
-	  <a href="https://link.springer.com/article/10.1007/s00340-023-08016-9" class="paper-link" target="_blank">Paper 3 (Add Anti-relaxation coating)</a>
 
-        </div>
-      </div>
-    </section>
+  <canvas id="quantum-canvas"></canvas>
 
-    <section class="research-section" onclick="toggleResearch(this)">
-      <div class="research-header">
-        <h2>⚛️ Leveraging Doppler shifts and Light Polarizations to switch between Absorption/Transmission</h2>
-        <span class="arrow">▼</span>
-      </div>
-      <div class="research-content">
-        <div class="research-content-inner">
-          <p>Thermal atoms can be divided into classes which can be used to switch between absorption and transmission. What happens if we take a large Zeeman Manifold? We can move from orientation to alignment but with a twist brought about by quantum interfernce effects.   </p>
-          <a href="https://www.sciencedirect.com/science/article/abs/pii/S0030401823002134" class="paper-link" target="_blank">Paper 4 (N level systems)</a>
-          <a href="https://https://link.springer.com/article/10.1007/s00340-025-08584-y" class="paper-link" target="_blank">Paper 5 (13 and 16 -level systems)</a>
-	  
-
-        </div>
-      </div>
-    </section>
-
-    <section class="research-section" onclick="toggleResearch(this)">
-      <div class="research-header">
-        <h2>🧲 Precision Magnetic Field Measurements</h2>
-        <span class="arrow">▼</span>
-      </div>
-      <div class="research-content">
-        <div class="research-content-inner">
-          <p>Using the symmetry of the interaction Hamitonian, the orientation of an arbitrary magnetic field can be found which requires no calibration. Proof of concept experiment is Done. Full experiment? Open for discussions and collaborations</p>
-          <a href="https://arxiv.org/abs/2509.12887" class="paper-link" target="_blank">Measurement Paper6 (Choose your quantization axis wisely!)</a>
-        </div>
-      </div>
-    </section>
+  <div class="hud-wrapper">
     
-    <!-- TABS SECTION -->
-    <section class="tabs-section">
-      <div class="tab-nav">
-        <button class="tab-btn active" onclick="openTab(event, 'projects')">Projects</button>
-        <button class="tab-btn" onclick="openTab(event, 'cv')">CV</button>
-        <button class="tab-btn" onclick="openTab(event, 'about')">About</button>
-        <button class="tab-btn" onclick="openTab(event, 'contact')">Contact</button>
+    <aside class="telemetry">
+
+
+      <div class="telemetry-block">
+        <div class="telemetry-title">Fundamental_Constants(???)</div>
+        <div>c = <span class="live-data">299,792,458</span> m/s</div>
+        <div>h = <span class="live-data">6.626e-34</span> J·s</div>
+        <div>α ≈ <span class="live-data">1/137.036</span></div>
       </div>
       
-      <div id="projects" class="tab-content active">
-        <h2>Creative Coding & Visualizations</h2>
-        <div class="project-grid">
-          <div class="project-card">
-            <h3>Collatz Race</h3>
-            <p>Modulo-9 visualization of the unsolved Collatz conjecture</p>
-            <a href="https://nnksharma.github.io/nnksharma/collatz.html" target="_blank">GitHub</a>
-          </div>
-          <!-- Add more projects -->
+       <div class="telemetry-block">
+        <div class="telemetry-title">Lorentz_Transform</div>
+        <div>AGE_UNI: 13.787 Gyr</div>
+        <div>FRAME: 0.99c (γ ≈ 7.08)</div>
+        <div style="margin-top: 5px;">Δt (Rest): <span id="t-local">0.000 s</span></div>
+        <div>Δt' (Dilated): <span id="t-dilated" class="live-data">0.000 s</span></div>
+      </div>
+
+
+    <div class="telemetry-block">
+        <div class="telemetry-title">Uncertainity_Principle</div>
+        <div style="font-size: 0.75rem; opacity: 0.8; margin-bottom: 5px;">[SPACE-MOMENTUM]</div>
+        <div>Δx: <span id="delta-x" class="live-data">1.000</span> nm</div>
+        <div>Δp: <span id="delta-p" class="live-data">0.500</span> a.u.</div>
+        
+        <div style="font-size: 0.75rem; opacity: 0.8; margin-top: 10px; margin-bottom: 5px;">[ENERGY-TIME]</div>
+        <div>ΔE: <span id="delta-e" class="live-data">0.250</span> eV</div>
+        <div>Δt_life: <span id="delta-t-life" class="live-data">2.100</span> fs</div>
+      </div>
+
+      <div class="telemetry-block">
+        <div class="telemetry-title">Temporal_Causality</div>
+        <div>PATH_INFO: <span id="path-stat" style="font-weight:bold;">ERASED</span></div>
+        <div>INTERFERENCE: <span id="interference-data" class="live-data">COHERENT</span></div>
+        <div style="margin-top: 5px;">Δt_COINC: <span id="coin-data" class="live-data">0.122</span> ns</div>
+        <div style="font-size: 0.7rem; opacity: 0.7;">*Non-linear time linkage.</div>
+      </div>
+
+      <div class="telemetry-block" style="border-left-color: var(--red-error); background: rgba(239, 68, 68, 0.05);">
+        <div class="telemetry-title" style="color: var(--red-error);">UNIFICATION_FAIL</div>
+        <div>GR / QUANTUM MERGE</div>
+        <div style="color: var(--red-error); font-weight: bold; margin-top: 5px; animation: glitch 2s infinite;">
+          SYS_ERR: NON_RENORMALIZABLE
         </div>
       </div>
+
+
+    </aside>
+
+    <main class="core-interface">
+      <header>
+        <h1>Nayan Sharma</h1>
+        <div class="subtitle">QUANTUM OPTICS // SYSTEM ARCHITECTURE</div>
+      </header>
+
+      <nav class="nav-grid">
+        <button class="nav-btn active" onclick="switchTab('tab-research')">Research</button>
+        <button class="nav-btn" onclick="switchTab('tab-database')">Database</button>
+        <button class="nav-btn" onclick="switchTab('tab-logic')">Logic</button>
+        <button class="nav-btn" onclick="switchTab('tab-comms')">Comms</button>
+      </nav>
+
+      <section id="tab-research" class="panel active">
+        <div class="case-file">
+          <div class="case-title">Atomic Spins in Vapor Cells</div>
+          <div class="case-content">
+            <p>Thermal atoms exist in a Maxwell-Boltzmann distribution. Extracting data at room temp without Doppler broadening interference requires precise optical pumping to closed transitions.</p>
+            <a href="https://link.springer.com/article/10.1140/epjd/e2020-10050-7" class="action-btn" target="_blank">Execute: Asymmetry</a>
+            <a href="https://www.sciencedirect.com/science/article/abs/pii/S0375960121005375" class="action-btn" target="_blank">Execute: Control</a>
+            <a href="https://link.springer.com/article/10.1007/s00340-023-08016-9" class="action-btn" target="_blank">Execute: Coating Matrix</a>
+          </div>
+        </div>
+
+        <div class="case-file">
+          <div class="case-title">Doppler Shifts & Polarization</div>
+          <div class="case-content">
+            <p>Dividing thermal atoms into classes to switch between absorption and transmission states. Expanding the Zeeman Manifold permits movement driven by quantum interference.</p>
+            <a href="https://www.sciencedirect.com/science/article/abs/pii/S0030401823002134" class="action-btn" target="_blank">Access: N-Level</a>
+            <a href="https://link.springer.com/article/10.1007/s00340-025-08584-y" class="action-btn" target="_blank">Access: 13 & 16-Level</a>
+          </div>
+        </div>
+
+        <div class="case-file">
+          <div class="case-title">Precision Field Measurement</div>
+          <div class="case-content">
+            <p>Exploiting the symmetry of the interaction Hamiltonian to isolate the orientation of arbitrary magnetic fields. Zero calibration required.</p>
+            <a href="https://arxiv.org/abs/2509.12887" class="action-btn" target="_blank">Access: Quantization Axis</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-database" class="panel">
+        <div class="case-file">
+          <div class="case-title">System Architecture (.nb)</div>
+          <div class="case-content">
+            <p>Raw mathematical configurations for N-level populations and Hanle systems. Source files archived for extraction.</p>
+            <a href="mathematica/16levelpopulation.nb" class="action-btn" download>Extract: 16-Level Structure</a>
+            <a href="mathematica/Hanle%20system%20modelling.nb" class="action-btn" download>Extract: Hanle Simulation</a>
+          </div>
+        </div>
+
+        <div class="case-file">
+          <div class="case-title">Collatz Race Applet</div>
+          <div class="case-content">
+            <p>Modulo-9 visualization algorithms targeting the unsolved Collatz conjecture. Web-based execution environment.</p>
+            <a href="https://nnksharma.github.io/nnksharma/collatz.html" class="action-btn" target="_blank">Initialize Visualizer</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-logic" class="panel">
+        <div class="case-file" style="border-left-color: var(--amber-alert);">
+          <div class="case-title">Philosophical Baseline</div>
+          <div class="case-content">
+            <p style="font-size: 1.2rem; color: var(--text-heading); font-style: italic; margin-bottom: 2rem; border-left: 3px solid var(--amber-alert); padding-left: 1rem;">
+              "To understand the nature of the universe, one must first master the art of observation without judgment. The energy of a system reveals itself only when the noise of assumption is silenced."
+            </p>
+            <p>I am a physicist decoding the quietest clues left by quantum systems. Have I found anything completely new? <strong>No</strong>—but the deduction is the thrill. Science is the ultimate puzzle, and the pursuit of truth is why I observe.</p>
+            <br>
+            <a href="cv.pdf" class="action-btn" target="_blank">Download Master Dossier (CV)</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-comms" class="panel">
+        <div class="case-file">
+          <div class="case-title">Secure Comms Channel</div>
+          <div class="case-content">
+            <p>Open channels for optics analysis, quantum discussions, or collaborative ventures.</p>
+            <br>
+            <a href="mailto:nlop2022@gmail.com" class="action-btn" style="font-size: 1.2rem;">TRANSMIT -> nlop2022@gmail.com</a>
+          </div>
+        </div>
+      </section>
       
-      <div id="cv" class="tab-content">
-        <h2>Curriculum Vitae</h2>
-        <p>Download my CV: <a href="cv.pdf" target="_blank">CV.pdf</a></p>
-        <!-- Embed CV or list experience -->
-      </div>
-      
-      <div id="about" class="tab-content">
-        <h2>About Me</h2>
-        <p>I'm a science enthusiast with a knack for asking questions that often seem silly... <em>Have I found anything new? NO—but who cares? Science is fun, and that's the reason I do it.</em></p>
-      </div>
-      
-      <div id="contact" class="tab-content">
-        <h2>Contact</h2>
-        <p>Email: nlop2022@gmail.com </p>
-      </div>
-    </section>
+    </main>
   </div>
-  
-  <footer>
-    © 2025 Nayan | Science
-  </footer>
 
   <script>
-    function toggleResearch(section) {
-      section.classList.toggle('expanded');
+    function switchTab(tabId) {
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
     }
+
+    let sessionStart = Date.now();
     
-    function openTab(evt, tabName) {
-      // Tab buttons
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      evt.currentTarget.classList.add('active');
+    /* PHYSICS CONSTANTS 
+       Increasing Gamma makes the time difference much more dramatic.
+    */
+    const gamma = 10.0; // At this rate, for every 10 seconds of your life, only 1 second passes in the 'Moving' frame.
+
+    setInterval(() => {
+      // 1. RELATIVISTIC CLOCKS
+      let tLocal = (Date.now() - sessionStart) / 1000;
+      let tDilated = tLocal / gamma; 
       
-      // Tab contents
-      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-      document.getElementById(tabName).classList.add('active');
+      // We use 3 decimal places so you still see 'movement', but it's not a blur.
+      document.getElementById('t-local').innerText = `+ ${tLocal.toFixed(3)} s`;
+      document.getElementById('t-dilated').innerText = `+ ${tDilated.toFixed(3)} s`;
+
+      /* --- HEISENBERG BEAST MODE --- */
+      // 1. Space-Momentum (Existing)
+      let dx = (Math.sin(Date.now() / 1200) * 0.7 + 1.1).toFixed(3); 
+      let dp = (0.527 / dx).toFixed(3);
+      document.getElementById('delta-x').innerText = dx;
+      document.getElementById('delta-p').innerText = dp;
+
+      // 2. Energy-Time (The New Beast)
+      // Simulating a rapid Energy fluctuation (Vacuum Jitter)
+      let de = (0.100 + Math.random() * 0.900).toFixed(3); 
+      // Time (lifetime) is inversely proportional to energy uncertainty
+      let dt_life = (0.527 / de).toFixed(3);
+      
+      document.getElementById('delta-e').innerText = de;
+      document.getElementById('delta-t-life').innerText = dt_life;
+
+      // 3. QUANTUM ERASER (Slower 5-second cycle)
+      let now = Date.now();
+      let isErased = (Math.floor(now / 5000) % 2 === 0);
+      const pathEl = document.getElementById('path-stat');
+      const interEl = document.getElementById('interference-data');
+      
+      if (isErased) {
+          pathEl.innerText = "ERASED"; pathEl.style.color = "var(--blue-primary)";
+          interEl.innerText = "COHERENT"; interEl.style.color = "var(--blue-primary)";
+      } else {
+          pathEl.innerText = "KNOWN"; pathEl.style.color = "var(--amber-alert)";
+          interEl.innerText = "WASHED"; interEl.style.color = "var(--text-ui)";
+      }
+      
+      // Coincidence Jitter
+      document.getElementById('coin-data').innerText = (0.120 + Math.random() * 0.004).toFixed(3);
+
+    }, 100); // Updated to 100ms (10 times a second) for a much smoother, readable pace.
+
+    /* --- THE QUANTUM CANVAS BACKGROUND --- */
+    const canvas = document.getElementById('quantum-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    let mouse = { x: null, y: null, radius: 150 };
+
+    window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
+    window.addEventListener('resize', init);
+
+    function init() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      particles = [];
+      for (let i = 0; i < 80; i++) {
+        particles.push({ 
+          x: Math.random()*width, 
+          y: Math.random()*height, 
+          vx: (Math.random()-0.5)*0.3, 
+          vy: (Math.random()-0.5)*0.3 
+        });
+      }
     }
+
+    function animate() {
+      ctx.clearRect(0,0,width,height);
+      particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if(p.x<0||p.x>width) p.vx*=-1; if(p.y<0||p.y>height) p.vy*=-1;
+        ctx.beginPath(); ctx.arc(p.x,p.y,1.2,0,Math.PI*2); ctx.fillStyle = 'rgba(2, 132, 199, 0.3)'; ctx.fill();
+      });
+      requestAnimationFrame(animate);
+    }
+    init(); animate();
+
   </script>
 </body>
 </html>
