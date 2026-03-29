@@ -2,45 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>N. Sharma | Quantum Optics Laboratory</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>N. Sharma | Quantum Console</title>
   
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;500;600&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   
   <style>
     :root {
-      --bg-light: #f0f4f8;
-      --blue-primary: #0284c7; 
-      --blue-glow: rgba(2, 132, 199, 0.2);
-      --slate-border: #cbd5e1;
-      --amber-alert: #d97706;
-      --red-error: #ef4444;
-      --text-ui: #64748b;
-      --text-main: #1e293b; 
-      --text-heading: #0f172a;
-      --panel-bg: rgba(255, 255, 255, 0.7);
+      /* Quantum Console Theme Variables */
+      --bg-void: #050507;
+      --bg-indigo: #0b0c10;
+      --teal-primary: #00f2fe; 
+      --purple-primary: #b026ff;
+      --teal-glow: rgba(0, 242, 254, 0.2);
+      --purple-glow: rgba(176, 38, 255, 0.25);
+      --border-soft: rgba(255, 255, 255, 0.1);
+      --text-muted: #8b9bb4;
+      --text-main: #e2e8f0; 
+      --text-bright: #ffffff;
+      --panel-bg: rgba(15, 16, 26, 0.6);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
     body {
-      background-color: var(--bg-light);
-      background-image: 
-        linear-gradient(rgba(148, 163, 184, 0.1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(148, 163, 184, 0.1) 1px, transparent 1px);
-      background-size: 30px 30px;
+      background-color: var(--bg-void);
+      background-image: radial-gradient(circle at 50% 0%, #150f24 0%, var(--bg-void) 70%);
       color: var(--text-main);
       font-family: 'Inter', sans-serif;
       overflow-x: hidden;
       line-height: 1.6;
     }
 
-html, body {
+    html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       min-height: 100vh;
-      /* This ensures the font scales properly on live servers */
       font-size: 16px; 
     }
 
@@ -51,178 +51,234 @@ html, body {
     .hud-wrapper {
       display: grid;
       grid-template-columns: 320px 1fr;
-      gap: 2.5rem;
-      max-width: 100%;
+      gap: 3rem;
+      max-width: 1400px;
       margin: 0 auto;
-      padding: 2rem;
+      padding: 3rem 2rem;
       min-height: 100vh;
       box-sizing: border-box;
     }
 
     .telemetry {
-      font-family: 'Share Tech Mono', monospace;
-      border-right: 1px solid var(--slate-border);
-      padding-right: 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
     }
 
     .telemetry-block {
-      background: rgba(255, 255, 255, 0.8);
-      border-left: 3px solid var(--blue-primary);
-      padding: 1rem;
+      background: var(--panel-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-soft);
+      border-radius: 12px;
+      padding: 1.2rem;
       font-size: 0.85rem;
-      color: var(--text-ui);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-      border-radius: 0 8px 8px 0;
+      color: var(--text-muted);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .telemetry-block:hover {
+      border-color: rgba(176, 38, 255, 0.4);
+      box-shadow: 0 8px 32px var(--purple-glow);
     }
 
     .telemetry-title {
-      color: var(--blue-primary);
-      font-weight: bold;
-      margin-bottom: 0.5rem;
+      color: var(--purple-primary);
+      font-weight: 700;
+      margin-bottom: 0.8rem;
       letter-spacing: 1px;
       text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .live-data { color: var(--blue-primary); font-weight: bold; }
+    .telemetry-title::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--teal-primary);
+      box-shadow: 0 0 10px var(--teal-primary);
+    }
+
+    .live-data { color: var(--teal-primary); font-weight: 700; text-shadow: 0 0 8px var(--teal-glow); }
 
     .core-interface { display: flex; flex-direction: column; }
 
     header { margin-bottom: 3rem; position: relative; }
 
     h1 {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 4.5rem;
-      font-weight: 700;
-      line-height: 1;
-      color: var(--text-heading);
-      text-transform: uppercase;
-      letter-spacing: 3px;
+      font-family: 'Inter', sans-serif;
+      font-size: 4rem;
+      font-weight: 300;
+      letter-spacing: -1px;
+      color: var(--text-bright);
+      margin-bottom: 0.5rem;
+    }
+
+    h1 strong {
+      font-weight: 600;
+      background: linear-gradient(90deg, var(--teal-primary), var(--purple-primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .subtitle {
-      font-family: 'Share Tech Mono', monospace;
-      color: var(--blue-primary);
-      font-size: 1.1rem;
-      margin-top: 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      font-size: 1rem;
       display: flex;
       gap: 15px;
       align-items: center;
+      letter-spacing: 1px;
     }
 
-    .subtitle::before { content: ""; width: 50px; height: 2px; background: var(--blue-primary); }
+    .subtitle::before { 
+      content: ""; 
+      width: 40px; 
+      height: 1px; 
+      background: var(--text-muted); 
+    }
 
     .nav-grid {
       display: flex;
-      gap: 1rem;
+      gap: 1.5rem;
       margin-bottom: 3rem;
-      border-bottom: 1px solid var(--slate-border);
-      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-soft);
+      padding-bottom: 1.5rem;
       flex-wrap: wrap;
     }
 
     .nav-btn {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 1.2rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--text-ui);
-      background: rgba(255, 255, 255, 0.5);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--text-muted);
+      background: transparent;
       border: none;
-      padding: 1rem 2.5rem;
+      padding: 0.5rem 1rem;
       cursor: pointer;
       position: relative;
       transition: all 0.3s ease;
-      clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+      border-radius: 6px;
     }
 
-    .nav-btn::after {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-      border: 1px solid var(--slate-border);
-      clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+    .nav-btn:hover {
+      color: var(--text-bright);
+      background: rgba(255, 255, 255, 0.05);
     }
 
-    .nav-btn:hover, .nav-btn.active {
-      background: #fff;
-      color: var(--blue-primary);
-      box-shadow: 0 5px 15px rgba(2, 132, 199, 0.15);
+    .nav-btn.active {
+      color: var(--teal-primary);
+      background: var(--teal-glow);
     }
 
-    .nav-btn.active::after { border-color: var(--blue-primary); border-width: 2px; }
+    .nav-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1.6rem; /* Aligns with the border-bottom of nav-grid */
+      left: 0; right: 0;
+      height: 2px;
+      background: var(--teal-primary);
+      box-shadow: 0 -2px 10px var(--teal-primary);
+    }
 
     .panel { display: none; }
-    .panel.active { display: block; animation: techReveal 0.5s cubic-bezier(0.1, 0.9, 0.2, 1) forwards; }
+    .panel.active { display: block; animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
-    @keyframes techReveal {
-      0% { opacity: 0; transform: scaleY(0.95) translateY(20px); filter: blur(4px); }
-      100% { opacity: 1; transform: scaleY(1) translateY(0); filter: blur(0); }
-    }
-
-    @keyframes glitch {
-      0%, 100% { opacity: 1; transform: translateX(0); }
-      90% { opacity: 1; transform: translateX(0); }
-      92% { opacity: 0.8; transform: translateX(-2px); }
-      94% { opacity: 0.9; transform: translateX(2px); }
-      96% { opacity: 0.8; transform: translateX(-1px); }
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(15px); }
+      100% { opacity: 1; transform: translateY(0); }
     }
 
     .case-file {
       background: var(--panel-bg);
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+      border: 1px solid var(--border-soft);
+      border-radius: 16px;
       padding: 2.5rem;
       margin-bottom: 1.5rem;
       position: relative;
-      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     }
 
-    .case-file::before {
-      content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
-      background: var(--slate-border); transition: 0.3s;
+    .case-file:hover { 
+      transform: translateY(-3px);
+      border-color: rgba(0, 242, 254, 0.3);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), inset 0 0 20px var(--teal-glow); 
     }
-
-    .case-file:hover::before { background: var(--blue-primary); }
-    .case-file:hover { box-shadow: 0 15px 35px rgba(2, 132, 199, 0.08); }
 
     .case-title {
-      font-family: 'Rajdhani', sans-serif; font-size: 1.8rem; color: var(--text-heading);
-      text-transform: uppercase; margin-bottom: 1rem; font-weight: 700;
+      font-family: 'Inter', sans-serif; 
+      font-size: 1.4rem; 
+      color: var(--text-bright);
+      margin-bottom: 1rem; 
+      font-weight: 600;
+      letter-spacing: -0.5px;
     }
 
-    .case-content p { color: var(--text-main); margin-bottom: 1.5rem; font-weight: 400; font-size: 1.05rem; }
+    .case-content p { 
+      color: var(--text-muted); 
+      margin-bottom: 1.8rem; 
+      font-weight: 400; 
+      font-size: 1.05rem; 
+      line-height: 1.7;
+    }
 
     .action-btn {
-      display: inline-block;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.9rem;
-      color: var(--blue-primary);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--teal-primary);
       text-decoration: none;
-      text-transform: uppercase;
       padding: 0.6rem 1.2rem;
       margin: 0.5rem 0.5rem 0 0;
-      border: 1px solid var(--blue-primary);
-      background: #fff;
-      position: relative;
-      overflow: hidden;
-      transition: 0.3s;
-      font-weight: bold;
+      border: 1px solid var(--border-soft);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
     }
 
     .action-btn::before {
-      content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-      background: rgba(2, 132, 199, 0.1); transition: 0.4s;
+      content: '→';
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
     }
 
-    .action-btn:hover { color: #fff; background: var(--blue-primary); box-shadow: 0 5px 15px var(--blue-glow); }
+    .action-btn:hover { 
+      border-color: var(--teal-primary);
+      background: rgba(0, 242, 254, 0.1);
+      box-shadow: 0 0 15px var(--teal-glow); 
+    }
+
+    .action-btn:hover::before {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .highlight-quote {
+      font-size: 1.2rem; 
+      color: var(--text-main); 
+      font-style: italic; 
+      margin-bottom: 2rem; 
+      border-left: 2px solid var(--purple-primary); 
+      padding-left: 1.5rem; 
+      background: linear-gradient(90deg, var(--purple-glow), transparent);
+      border-radius: 0 8px 8px 0;
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
 
     @media (max-width: 900px) {
-      .hud-wrapper { grid-template-columns: 1fr; }
+      .hud-wrapper { grid-template-columns: 1fr; padding: 1.5rem; }
       .telemetry { display: none; } 
-      h1 { font-size: 3rem; }
+      h1 { font-size: 2.8rem; }
     }
   </style>
 </head>
@@ -234,62 +290,54 @@ html, body {
     
     <aside class="telemetry">
 
-
       <div class="telemetry-block">
-        <div class="telemetry-title">Fundamental_Constants(???)</div>
+        <div class="telemetry-title">Fundamental_Constants</div>
         <div>c = <span class="live-data">299,792,458</span> m/s</div>
         <div>h = <span class="live-data">6.626e-34</span> J·s</div>
         <div>α ≈ <span class="live-data">1/137.036</span></div>
       </div>
       
        <div class="telemetry-block">
-        <div class="telemetry-title">Lorentz_Transform</div>
+        <div class="telemetry-title">Lorentz_Transformation</div>
         <div>AGE_UNI: 13.787 Gyr</div>
         <div>FRAME: 0.99c (γ ≈ 7.08)</div>
-        <div style="margin-top: 5px;">Δt (Rest): <span id="t-local">0.000 s</span></div>
-        <div>Δt' (Dilated): <span id="t-dilated" class="live-data">0.000 s</span></div>
+        <div style="margin-top: 8px; border-top: 1px dashed var(--border-soft); padding-top: 8px;">
+          Δt (Local): <span id="t-local">0.000 s</span><br>
+          Δt' (Remote): <span id="t-dilated" class="live-data">0.000 s</span>
+        </div>
       </div>
 
-
     <div class="telemetry-block">
-        <div class="telemetry-title">Uncertainity_Principle</div>
-        <div style="font-size: 0.75rem; opacity: 0.8; margin-bottom: 5px;">[SPACE-MOMENTUM]</div>
+        <div class="telemetry-title">Heisenberg_Quantum_Uncertainity</div>
+        <div style="font-size: 0.75rem; opacity: 0.6; margin-bottom: 4px;">[SPACE-MOMENTUM]</div>
         <div>Δx: <span id="delta-x" class="live-data">1.000</span> nm</div>
         <div>Δp: <span id="delta-p" class="live-data">0.500</span> a.u.</div>
         
-        <div style="font-size: 0.75rem; opacity: 0.8; margin-top: 10px; margin-bottom: 5px;">[ENERGY-TIME]</div>
+        <div style="font-size: 0.75rem; opacity: 0.6; margin-top: 12px; margin-bottom: 4px;">[ENERGY-TIME]</div>
         <div>ΔE: <span id="delta-e" class="live-data">0.250</span> eV</div>
         <div>Δt_life: <span id="delta-t-life" class="live-data">2.100</span> fs</div>
       </div>
 
-      <div class="telemetry-block">
-        <div class="telemetry-title">Temporal_Causality</div>
-        <div>PATH_INFO: <span id="path-stat" style="font-weight:bold;">ERASED</span></div>
-        <div>INTERFERENCE: <span id="interference-data" class="live-data">COHERENT</span></div>
-        <div style="margin-top: 5px;">Δt_COINC: <span id="coin-data" class="live-data">0.122</span> ns</div>
-        <div style="font-size: 0.7rem; opacity: 0.7;">*Non-linear time linkage.</div>
-      </div>
-
-      <div class="telemetry-block" style="border-left-color: var(--red-error); background: rgba(239, 68, 68, 0.05);">
-        <div class="telemetry-title" style="color: var(--red-error);">UNIFICATION_FAIL</div>
-        <div>GR / QUANTUM MERGE</div>
-        <div style="color: var(--red-error); font-weight: bold; margin-top: 5px; animation: glitch 2s infinite;">
-          SYS_ERR: NON_RENORMALIZABLE
+      <div class="telemetry-block" style="border-color: rgba(176, 38, 255, 0.3); background: rgba(176, 38, 255, 0.05);">
+        <div class="telemetry-title" style="color: var(--purple-primary);">Coherence_Status</div>
+        <div>PATH_INFO: <span id="path-stat" style="color: var(--teal-primary);">ERASED</span></div>
+        <div>INTERFERENCE: <span id="interference-data" class="live-data">STABLE</span></div>
+        <div style="margin-top: 8px; font-size: 0.75rem;">
+          SYS_STATE: <span style="color: var(--purple-primary);">OPTIMAL</span>
         </div>
       </div>
-
 
     </aside>
 
     <main class="core-interface">
       <header>
-        <h1>Nayan Sharma</h1>
-        <div class="subtitle">QUANTUM OPTICS // SYSTEM ARCHITECTURE</div>
+        <h1>Nayan <strong>Sharma</strong></h1>
+        <div class="subtitle">QUANTUM OPTICS</div>
       </header>
 
       <nav class="nav-grid">
         <button class="nav-btn active" onclick="switchTab('tab-research')">Research</button>
-        <button class="nav-btn" onclick="switchTab('tab-database')">Database</button>
+        <button class="nav-btn" onclick="switchTab('tab-resources')">Projects</button>
         <button class="nav-btn" onclick="switchTab('tab-logic')">Logic</button>
         <button class="nav-btn" onclick="switchTab('tab-comms')">Comms</button>
       </nav>
@@ -299,9 +347,9 @@ html, body {
           <div class="case-title">Atomic Spins in Vapor Cells</div>
           <div class="case-content">
             <p>Thermal atoms exist in a Maxwell-Boltzmann distribution. Extracting data at room temp without Doppler broadening interference requires precise optical pumping to closed transitions.</p>
-            <a href="https://link.springer.com/article/10.1140/epjd/e2020-10050-7" class="action-btn" target="_blank">Execute: Asymmetry</a>
-            <a href="https://www.sciencedirect.com/science/article/abs/pii/S0375960121005375" class="action-btn" target="_blank">Execute: Control</a>
-            <a href="https://link.springer.com/article/10.1007/s00340-023-08016-9" class="action-btn" target="_blank">Execute: Coating Matrix</a>
+            <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q=Understanding+asymmetry+in+electromagnetically+induced+transparency+for+87Rb+in+strong+transverse+magnetic+field&btnG=" class="action-btn"> Understanding Asymmetry</a>
+            <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q=Competition+between+off-resonant+and+on-resonant+processes+in+electromagnetically+induced+transparency+in+presence+of+magnetic+field&btnG=" class="action-btn"> Control Asymmetry via Power</a>
+            <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q=Anti-relaxation+coating-induced+velocity-dependent+population+re-distribution+in+electromagnetically+induced+transparency&btnG=" class="action-btn"> Control Asymmetry via Surface Coating</a>
           </div>
         </div>
 
@@ -309,60 +357,70 @@ html, body {
           <div class="case-title">Doppler Shifts & Polarization</div>
           <div class="case-content">
             <p>Dividing thermal atoms into classes to switch between absorption and transmission states. Expanding the Zeeman Manifold permits movement driven by quantum interference.</p>
-            <a href="https://www.sciencedirect.com/science/article/abs/pii/S0030401823002134" class="action-btn" target="_blank">Access: N-Level</a>
-            <a href="https://link.springer.com/article/10.1007/s00340-025-08584-y" class="action-btn" target="_blank">Access: 13 & 16-Level</a>
+            <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q=Light+shift+induced+modification+of+electromagnetically+induced+resonances+in+atomic+vapor&btnG=" class="action-btn"> N-Level System: Detuning Dependent Switching</a>
+            <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q=Anisotropy-induced+absorption+in+a+large+Zeeman+manifold&btnG=" class="action-btn">Access: 13 & 16-Level Systems: Polarization Indcued Switching</a>
           </div>
         </div>
 
         <div class="case-file">
-          <div class="case-title">Precision Field Measurement</div>
+          <div class="case-title">Precision Field Sensing</div>
           <div class="case-content">
-            <p>Exploiting the symmetry of the interaction Hamiltonian to isolate the orientation of arbitrary magnetic fields. Zero calibration required.</p>
-            <a href="https://arxiv.org/abs/2509.12887" class="action-btn" target="_blank">Access: Quantization Axis</a>
+            <p>Exploiting the symmetry of the interaction Hamiltonian to isolate the orientation of arbitrary magnetic fields. No calibration required.</p>
+            <a href="https://arxiv.org/pdf/2509.12887" class="action-btn"> Hanle Effect Based Mangnetic Sensing</a>
+          </div>
+	</div>
+
+
+
+        <div class="case-file">
+          <div class="case-title">Gauge-Invariant Loop Phase</div>
+          <div class="case-content">
+            <p>Closed-loop systems have non-trivial Topology giving rise to interesting physics.</p>
+            <a href="https://arxiv.org/pdf/2512.23642" class="action-btn"> Phase Mapping Using Structured Light</a>
           </div>
         </div>
       </section>
 
-      <section id="tab-database" class="panel">
+      <section id="tab-resources" class="panel">
         <div class="case-file">
-          <div class="case-title">System Architecture (.nb)</div>
+          <div class="case-title">Conflict Analysis</div>
           <div class="case-content">
-            <p>Raw mathematical configurations for N-level populations and Hanle systems. Source files archived for extraction.</p>
-            <a href="mathematica/16levelpopulation.nb" class="action-btn" download>Extract: 16-Level Structure</a>
-            <a href="mathematica/Hanle%20system%20modelling.nb" class="action-btn" download>Extract: Hanle Simulation</a>
-          </div>
+            <p>War clock based on a crude mathematical model for US-Israel Iran Conflict.</p>
+            <a href="https://nnksharma.github.io/War-Clock/" class="action-btn">दी-War Clock</a>
+	    <a href="https://github.com/nnksharma/War-Clock" class="action-btn">Source Files</a>
+            </div>
         </div>
 
         <div class="case-file">
           <div class="case-title">Collatz Race Applet</div>
           <div class="case-content">
-            <p>Modulo-9 visualization algorithms targeting the unsolved Collatz conjecture. Web-based execution environment.</p>
-            <a href="https://nnksharma.github.io/nnksharma/collatz.html" class="action-btn" target="_blank">Initialize Visualizer</a>
+            <p>Modulo-9 visualization of Collatz conjecture.</p>
+            <a href="#" class="action-btn">Initialize Visualizer</a>
           </div>
         </div>
       </section>
 
       <section id="tab-logic" class="panel">
-        <div class="case-file" style="border-left-color: var(--amber-alert);">
+        <div class="case-file">
           <div class="case-title">Philosophical Baseline</div>
           <div class="case-content">
-            <p style="font-size: 1.2rem; color: var(--text-heading); font-style: italic; margin-bottom: 2rem; border-left: 3px solid var(--amber-alert); padding-left: 1rem;">
+            <p class="highlight-quote">
               "To understand the nature of the universe, one must first master the art of observation without judgment. The energy of a system reveals itself only when the noise of assumption is silenced."
             </p>
-            <p>I am a physicist decoding the quietest clues left by quantum systems. Have I found anything completely new? <strong>No</strong>—but the deduction is the thrill. Science is the ultimate puzzle, and the pursuit of truth is why I observe.</p>
+            <p>I am a physicist decoding the quietest clues left by quantum systems. Have I found anything completely new? <strong>No</strong>-but the deduction is the thrill. Science is the ultimate puzzle, and the pursuit of truth is why I observe.</p>
             <br>
-            <a href="cv.pdf" class="action-btn" target="_blank">Download Master Dossier (CV)</a>
+            <a href="#" class="action-btn">CV</a>
           </div>
         </div>
       </section>
 
       <section id="tab-comms" class="panel">
         <div class="case-file">
-          <div class="case-title">Secure Comms Channel</div>
+          <div class="case-title">Contact</div>
           <div class="case-content">
-            <p>Open channels for optics analysis, quantum discussions, or collaborative ventures.</p>
+            <p>Please feel free to reach out.</p>
             <br>
-            <a href="mailto:nlop2022@gmail.com" class="action-btn" style="font-size: 1.2rem;">TRANSMIT -> nlop2022@gmail.com</a>
+            <a href="mailto:nlop2022@gmail.com" class="action-btn" style="font-size: 1.1rem; padding: 0.8rem 1.5rem;">Initialize Connection -> nlop2022@gmail.com</a>
           </div>
         </div>
       </section>
@@ -379,88 +437,109 @@ html, body {
     }
 
     let sessionStart = Date.now();
-    
-    /* PHYSICS CONSTANTS 
-       Increasing Gamma makes the time difference much more dramatic.
-    */
-    const gamma = 10.0; // At this rate, for every 10 seconds of your life, only 1 second passes in the 'Moving' frame.
+    const gamma = 10.0;
 
     setInterval(() => {
-      // 1. RELATIVISTIC CLOCKS
       let tLocal = (Date.now() - sessionStart) / 1000;
       let tDilated = tLocal / gamma; 
       
-      // We use 3 decimal places so you still see 'movement', but it's not a blur.
       document.getElementById('t-local').innerText = `+ ${tLocal.toFixed(3)} s`;
       document.getElementById('t-dilated').innerText = `+ ${tDilated.toFixed(3)} s`;
 
-      /* --- HEISENBERG BEAST MODE --- */
-      // 1. Space-Momentum (Existing)
       let dx = (Math.sin(Date.now() / 1200) * 0.7 + 1.1).toFixed(3); 
       let dp = (0.527 / dx).toFixed(3);
       document.getElementById('delta-x').innerText = dx;
       document.getElementById('delta-p').innerText = dp;
 
-      // 2. Energy-Time (The New Beast)
-      // Simulating a rapid Energy fluctuation (Vacuum Jitter)
       let de = (0.100 + Math.random() * 0.900).toFixed(3); 
-      // Time (lifetime) is inversely proportional to energy uncertainty
       let dt_life = (0.527 / de).toFixed(3);
       
       document.getElementById('delta-e').innerText = de;
       document.getElementById('delta-t-life').innerText = dt_life;
 
-      // 3. QUANTUM ERASER (Slower 5-second cycle)
       let now = Date.now();
       let isErased = (Math.floor(now / 5000) % 2 === 0);
       const pathEl = document.getElementById('path-stat');
       const interEl = document.getElementById('interference-data');
       
       if (isErased) {
-          pathEl.innerText = "ERASED"; pathEl.style.color = "var(--blue-primary)";
-          interEl.innerText = "COHERENT"; interEl.style.color = "var(--blue-primary)";
+          pathEl.innerText = "ERASED"; pathEl.style.color = "var(--teal-primary)";
+          interEl.innerText = "STABLE"; interEl.style.color = "var(--text-main)";
       } else {
-          pathEl.innerText = "KNOWN"; pathEl.style.color = "var(--amber-alert)";
-          interEl.innerText = "WASHED"; interEl.style.color = "var(--text-ui)";
+          pathEl.innerText = "OBSERVED"; pathEl.style.color = "var(--purple-primary)";
+          interEl.innerText = "COLLAPSED"; interEl.style.color = "var(--text-muted)";
       }
-      
-      // Coincidence Jitter
-      document.getElementById('coin-data').innerText = (0.120 + Math.random() * 0.004).toFixed(3);
 
-    }, 100); // Updated to 100ms (10 times a second) for a much smoother, readable pace.
+    }, 100);
 
-    /* --- THE QUANTUM CANVAS BACKGROUND --- */
+    /* --- GRAVITY WELL CANVAS BACKGROUND --- */
     const canvas = document.getElementById('quantum-canvas');
     const ctx = canvas.getContext('2d');
     let width, height, particles = [];
-    let mouse = { x: null, y: null, radius: 150 };
+    let mouse = { x: null, y: null };
 
-    window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
+    window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+    window.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
     window.addEventListener('resize', init);
 
     function init() {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
       particles = [];
-      for (let i = 0; i < 80; i++) {
+      for (let i = 0; i < 120; i++) {
         particles.push({ 
-          x: Math.random()*width, 
-          y: Math.random()*height, 
-          vx: (Math.random()-0.5)*0.3, 
-          vy: (Math.random()-0.5)*0.3 
+          x: Math.random() * width, 
+          y: Math.random() * height, 
+          baseX: Math.random() * width,
+          baseY: Math.random() * height,
+          size: Math.random() * 2 + 0.5,
+          color: Math.random() > 0.5 ? '#00f2fe' : '#b026ff',
+          speed: Math.random() * 0.02 + 0.01,
+          angle: Math.random() * Math.PI * 2
         });
       }
     }
 
     function animate() {
-      ctx.clearRect(0,0,width,height);
+      ctx.clearRect(0, 0, width, height);
+      
       particles.forEach(p => {
-        p.x += p.vx; p.y += p.vy;
-        if(p.x<0||p.x>width) p.vx*=-1; if(p.y<0||p.y>height) p.vy*=-1;
-        ctx.beginPath(); ctx.arc(p.x,p.y,1.2,0,Math.PI*2); ctx.fillStyle = 'rgba(2, 132, 199, 0.3)'; ctx.fill();
+        // Subtle natural drift
+        p.angle += p.speed;
+        let targetX = p.baseX + Math.cos(p.angle) * 30;
+        let targetY = p.baseY + Math.sin(p.angle) * 30;
+
+        // Gravity well effect near mouse
+        if (mouse.x != null && mouse.y != null) {
+          let dx = mouse.x - p.x;
+          let dy = mouse.y - p.y;
+          let distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 250) {
+            let force = (250 - distance) / 250;
+            // Orbit calculation
+            let orbitAngle = Math.atan2(dy, dx) + (Math.PI / 2); // 90 degrees offset for orbit
+            targetX += Math.cos(orbitAngle) * force * 50;
+            targetY += Math.sin(orbitAngle) * force * 50;
+          }
+        }
+
+        // Smooth movement
+        p.x += (targetX - p.x) * 0.05;
+        p.y += (targetY - p.y) * 0.05;
+
+        // Draw particle
+        ctx.beginPath(); 
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); 
+        ctx.fillStyle = p.color; 
+        ctx.globalAlpha = 0.6;
+        ctx.fill();
+        ctx.globalAlpha = 1.0;
       });
+
       requestAnimationFrame(animate);
     }
+    
     init(); animate();
 
   </script>
